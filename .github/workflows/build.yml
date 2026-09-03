@@ -29,27 +29,9 @@ jobs:
       - name: Extract project
         run: unzip -o FloosyFein_v1_full.zip
 
-      - name: Fix Java and Kotlin targets
+      - name: Fix JVM targets
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path("app/build.gradle.kts")
-          s = p.read_text()
-          s = s.replace(
-              'compileSdk = 35',
-              '''compileSdk = 35
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }'''
-          )
-          p.write_text(s)
-          PY
+          sed -i 's/android {/android {\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n\n    kotlinOptions {\n        jvmTarget = "17"\n    }/' app/build.gradle.kts
 
       - name: Build APK
         run: gradle assembleDebug --no-daemon
