@@ -30,12 +30,11 @@ jobs:
         run: unzip -o FloosyFein_v1_full.zip
 
       - name: Build APK
-        working-directory: FloosyFein_v1_full
         run: gradle assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: FloosyFein-debug
-          path: FloosyFein_v1_full/app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
