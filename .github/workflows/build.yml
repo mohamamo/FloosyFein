@@ -29,9 +29,36 @@ jobs:
       - name: Extract project
         run: unzip -o FloosyFein_v1_full.zip
 
-      - name: Fix JVM targets
+      - name: Fix Gradle configuration
         run: |
-          sed -i 's/android {/android {\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n\n    kotlinOptions {\n        jvmTarget = "17"\n    }/' app/build.gradle.kts
+          cat > app/build.gradle.kts <<'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+
+          android {
+              namespace = "com.example.floosyfein"
+              compileSdk = 35
+
+              defaultConfig {
+                  applicationId = "com.example.floosyfein"
+                  minSdk = 23
+                  targetSdk = 35
+                  versionCode = 2
+                  versionName = "1.0"
+              }
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          }
+          EOF
 
       - name: Build APK
         run: gradle assembleDebug --no-daemon
